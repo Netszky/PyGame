@@ -29,9 +29,9 @@ FPS = 60 # Nombre de tick du timer 60 = On verifie 60 fois par seconde
 timer = pygame.time.Clock() # Variable contenenant le timer
 level = 0
 Vie = 1
-vitesse = 10 #vitesse de déplacement
+vitesse = 20 #vitesse de déplacement
 vitesse_laser = 30
-vitesse_ennemie = 2
+vitesse_ennemie = 1
 tir_rapide = 15
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))  #pygame.FULLSCREEN) # Initialisation Fenetre
@@ -66,7 +66,6 @@ class Acteur: #Classe principal dont heriteront le joueur et les ennemies
             laser = Laser(self.x, self.y, self.laser_img)
             self.laser_list.append(laser)
             shoot_sound.play()
-            print(tir_rapide)
         else:
             self.COUNT += 1
 
@@ -148,8 +147,8 @@ def IntersectWith(acteur1, acteur2):
 
 #Fonction Menu Principal
 def main_menu():
-    musique_menu.stop() 
-    musique_menu.play() #Jouer la Musique
+    # musique_menu.stop() 
+    # musique_menu.play() #Jouer la Musique
     run = True
     while run:
         screen.blit(Background,(0,0))
@@ -177,7 +176,7 @@ def main_menu():
                 pygame.quit()
         #Affichage Boutton + Texte
         pygame.draw.rect(screen, (81, 101, 240), button_1)
-        pygame.draw.rect(screen, (81, 101, 240), button_2)
+        pygame.draw.rect(screen, (81, 101, 240, 0.9), button_2)
         pygame.draw.rect(screen, (81, 101, 240), button_3)
         screen.blit(play, (260, 440))
         screen.blit(instruction, (885, 440))
@@ -405,6 +404,4 @@ def main():
         player.move_lasers(vitesse_laser, ennemies)
         refresh()
        
-        
-
 main_menu()
