@@ -32,6 +32,7 @@ Vie = 1
 vitesse = 10 #vitesse de déplacement
 vitesse_laser = 30
 vitesse_ennemie = 2
+tir_rapide = 15
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))  #pygame.FULLSCREEN) # Initialisation Fenetre
 pygame.display.set_caption('Brick Shooter YNOV') #Titre Fenetre
@@ -39,7 +40,8 @@ pygame.display.set_caption('Brick Shooter YNOV') #Titre Fenetre
 #Classes  du jeu
 
 class Acteur: #Classe principal dont heriteront le joueur et les ennemies
-    COOLDOWN = 15
+    global tir_rapide
+    COUNT = 0
     def __init__(self, x, y, health):
         self.x = x
         self.y = y
@@ -58,22 +60,18 @@ class Acteur: #Classe principal dont heriteront le joueur et les ennemies
     def get_width(self):
         return self.img.get_width()
 
-    # def cooldown(self):
-    #     if self.cd >= self.COOLDOWN:
-    #         self.cd = 0
-    #     elif self.cd > 0:
-    #         self.cd += 1
-
     def tirer(self):
-        # if self.cd == 0:
+        if self.COUNT >= tir_rapide: #Boucle pour Vitesse de Tir Joueur
+            self.COUNT = 0
             laser = Laser(self.x, self.y, self.laser_img)
             self.laser_list.append(laser)
-            self.cd = 1
             shoot_sound.play()
+            print(tir_rapide)
+        else:
+            self.COUNT += 1
 
 
     def move_lasers(self, vitesse, acteur):
-        # self.cooldown()
         for laser in self.laser_list:
             laser.move(vitesse)
             if laser.off_screen(HEIGHT):
@@ -92,7 +90,7 @@ class Player(Acteur):
         #self.max_health = health
 
 
-    def move_lasers(self, vitesse, acteurs):
+    def move_lasers(self, vitesse, acteurs): #Fonction Laser Joueur qui vérifie si collision avec autre acteur(Ennemie) et supprime l'ennemie si Collision
         # self.cooldown()
         global credit_joueur
         for laser in self.laser_list:
@@ -147,25 +145,26 @@ def IntersectWith(acteur1, acteur2):
     distance_x = acteur2.x - acteur1.x
     distance_y = acteur2.y - acteur1.y
     return acteur1.mask.overlap(acteur2.mask, (distance_x, distance_y)) != None
-#Test Pygame_Menu
+
 #Fonction Menu Principal
 def main_menu():
-    musique_menu.stop()
-    musique_menu.play()
+    musique_menu.stop() 
+    musique_menu.play() #Jouer la Musique
     run = True
     while run:
         screen.blit(Background,(0,0))
-        button_1 = pygame.Rect(200, 440, 200, 50)
+        #Affichage du Menu
+        button_1 = pygame.Rect(200, 440, 200, 50) 
         button_2 = pygame.Rect(873, 440, 200, 50)
         button_3 = pygame.Rect(1546, 440, 200, 50)
         title = style.render("MENU PRINCIPAL", 1, (255,0,0)) 
         play = style_small.render("Jouer", 1, (0,0,0))
         instruction = style_small.render("Instructions", 1, (0,0,0))
         boutique = style_small.render("Boutique", 1, (0,0,0))
-        mx, my = pygame.mouse.get_pos()
+        mx, my = pygame.mouse.get_pos() #Obtenir position Curseur Souris
         for event in pygame.event.get():
             if button_1.collidepoint((mx, my)):
-                if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.type == pygame.MOUSEBUTTONDOWN: #Si le Bouton de la souris est pressé et que le curseur est au dessus du "button_1"
                     main()
             if button_2.collidepoint((mx, my)):
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -176,7 +175,7 @@ def main_menu():
             if event.type == pygame.QUIT:
                 run = False
                 pygame.quit()
-
+        #Affichage Boutton + Texte
         pygame.draw.rect(screen, (81, 101, 240), button_1)
         pygame.draw.rect(screen, (81, 101, 240), button_2)
         pygame.draw.rect(screen, (81, 101, 240), button_3)
@@ -203,7 +202,7 @@ def Instructions():
             if button_1.collidepoint((mx, my)):
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     main_menu()
-        
+        #Affichage Bouton + Texte
         pygame.draw.rect(screen, (81, 101, 240), button_1)
         screen.blit(back, (80, 20))
         pygame.display.update()
@@ -213,6 +212,7 @@ def Boutique():
     global credit_joueur
     global vitesse
     global Vie
+    global tir_rapide
     run = True
     while run:
         mx, my = pygame.mouse.get_pos()
@@ -244,6 +244,8 @@ def Boutique():
                     if credit_joueur >= 50:
                         credit_joueur -= 50
                         Vie += 1
+                        tir_rapide -= 10
+                        print(tir_rapide)
                         Achat()
                     else:
                         Cancel()
@@ -256,17 +258,6 @@ def Boutique():
         screen.blit(menu_boutique_2,(WIDTH/2-menu_boutique_2.get_width()/2,HEIGHT/2 + menu_boutique_1.get_height()*2))
         screen.blit(back, (20,20))
         pygame.display.update()
-
-            # if event.type == pygame.KEYDOWN:
-            #     if event.key == pygame.K_ESCAPE:
-            #         main_menu()
-            #     if event.key == pygame.K_1:
-            #         if credit_joueur >= 100:
-            #             credit_joueur -= 100
-            #             vitesse += 10
-            #             Achat()
-            #         else:
-            #             Cancel()
 
 #Achat Effectué
 def Achat():
