@@ -7,8 +7,8 @@ pygame.init()
 # Ecran
 WIDTH = 1920 #Largeur Ecran
 HEIGHT = 1080 # Hauteur Ecran
-style = pygame.font.SysFont("arial", 50) #Style Ecriture
-style_small = pygame.font.SysFont("comicsansms", 30)
+style = pygame.font.Font("assets/fonts/pixel.ttf", 50) #Style Ecriture
+style_small = pygame.font.Font("assets/fonts/pixel.ttf", 30)
 
 #Def Image du jeu
 Background = pygame.transform.scale(pygame.image.load(os.path.join("assets", "background.jpg")), (WIDTH, HEIGHT)) # Fond D'écran + Scale selon Largeur Longueur ecran pour cover tout l'écran
@@ -176,7 +176,7 @@ def main_menu():
                 pygame.quit()
         #Affichage Boutton + Texte
         pygame.draw.rect(screen, (81, 101, 240), button_1)
-        pygame.draw.rect(screen, (81, 101, 240, 0.9), button_2)
+        pygame.draw.rect(screen, (81, 101, 240, 127), button_2)
         pygame.draw.rect(screen, (81, 101, 240), button_3)
         screen.blit(play, (260, 440))
         screen.blit(instruction, (885, 440))
@@ -219,9 +219,9 @@ def Boutique():
         title_boutique = style.render("Boutique", 1, (255,0,0))
         back = style_small.render("Retour", 1, (0,0,0))
         credit_boutique = style.render(f"Credit: {credit_joueur}", 1, (255,0,0))
-        menu_boutique_1 = style.render("1. Vitesse de deplacement Accelérée(Joueur) -100 Credits",1 , (255,0,0))
-        menu_boutique_2 = style.render("2. Vie + 1 - 50 Credits", 1, (255,0,0))
-        menu_boutique_3 = style.render("3. Tir GIGA RAPIDE", 1, (255,0,0))
+        menu_boutique_1 = style.render("Vitesse de deplacement Acceleree(Joueur) -100 Credits",1 , (255,0,0))
+        menu_boutique_2 = style.render("1 Vie 50 Credits", 1, (255,0,0))
+        menu_boutique_3 = style.render("Tir GIGA RAPIDE", 1, (255,0,0))
 
         button_1 = pygame.Rect(WIDTH/2-menu_boutique_1.get_width()/2,HEIGHT/2,menu_boutique_1.get_width(), menu_boutique_1.get_height())
         button_back = pygame.Rect(20, 20, back.get_width(), back.get_height())
@@ -274,7 +274,7 @@ def Achat():
     run = True
     while run:
         screen.blit(Background, (0,0))
-        achat_1 = style.render("Achat effectué",1 ,(255,0,0))
+        achat_1 = style.render("Achat effectue",1 ,(255,0,0))
         button_1 = pygame.Rect(20, 20, 200, 50)
         back = style_small.render("Retour", 1, (0,0,0))
         mx, my = pygame.mouse.get_pos()
@@ -295,7 +295,7 @@ def Cancel():
     keys = pygame.key.get_pressed()
     while run:
         screen.blit(Background, (0,0))
-        cancel_1 = style.render(f"Pas Assez de credit, Credit: {credit_joueur}", 1, (255,0,0))
+        cancel_1 = style.render(f"Pas Assez de credit Credit: {credit_joueur}", 1, (255,0,0))
         button_1 = pygame.Rect(20, 20, 200, 50)
         back = style_small.render("Retour", 1, (0,0,0))
         mx, my = pygame.mouse.get_pos()
@@ -347,7 +347,7 @@ def main():
         screen.blit(Background,(0,0))
         title = style.render(f"Level: {level}", 1, (255,0,0)) #Definir le text a ecrire + style + couleur
         cre = style.render(f"Credit: {credit_joueur}", 1, (255,0,0))
-        Vie_restant = style.render(f"Vie: {Vie}", 1, (255,0,0))
+        Vie_restant = style.render(f"Vie = {Vie}", 1, (255,0,0))
         screen.blit(cre, (10,60))
         screen.blit(Vie_restant, (1800, 0))
         screen.blit(title, (10,0)) 
@@ -368,8 +368,8 @@ def main():
             for i in range(nb_ennemies):
                 enemy = Ennemie(random.randrange(50, WIDTH-50), random.randrange(-1000, -100), random.choice(["green", "violet"]))
                 ennemies.append(enemy)
-            nb_ennemies += 4
-            vitesse_ennemie += 1
+            nb_ennemies += 2
+            vitesse_ennemie += 0.5
             level += 1
 
         for event in pygame.event.get():
