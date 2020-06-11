@@ -141,8 +141,9 @@ class Laser:
 
 #Fonction pour les collisions
 def IntersectWith(acteur1, acteur2):
-    distance_x = acteur2.x - acteur1.x
-    distance_y = acteur2.y - acteur1.y
+    
+    distance_x = int(acteur2.x - acteur1.x)
+    distance_y = int(acteur2.y - acteur1.y)
     return acteur1.mask.overlap(acteur2.mask, (distance_x, distance_y)) != None
 
 #Fonction Menu Principal
@@ -152,14 +153,13 @@ def main_menu():
     run = True
     while run:
         screen.blit(Background,(0,0))
-        #Affichage du Menu
-        button_1 = pygame.Rect(200, 440, 200, 50) 
-        button_2 = pygame.Rect(873, 440, 200, 50)
-        button_3 = pygame.Rect(1546, 440, 200, 50)
         title = style.render("MENU PRINCIPAL", 1, (255,0,0)) 
         play = style_small.render("Jouer", 1, (0,0,0))
         instruction = style_small.render("Instructions", 1, (0,0,0))
         boutique = style_small.render("Boutique", 1, (0,0,0))
+        button_1 = pygame.Rect(WIDTH/3-play.get_width(), 440, play.get_width() + 20, play.get_height()) 
+        button_2 = pygame.Rect(873, 440, instruction.get_width(), instruction.get_height())
+        button_3 = pygame.Rect(1280, 440, boutique.get_width(), boutique.get_height())
         mx, my = pygame.mouse.get_pos() #Obtenir position Curseur Souris
         for event in pygame.event.get():
             if button_1.collidepoint((mx, my)):
@@ -176,11 +176,11 @@ def main_menu():
                 pygame.quit()
         #Affichage Boutton + Texte
         pygame.draw.rect(screen, (81, 101, 240), button_1)
-        pygame.draw.rect(screen, (81, 101, 240, 127), button_2)
+        pygame.draw.rect(screen, (81, 101, 240), button_2)
         pygame.draw.rect(screen, (81, 101, 240), button_3)
-        screen.blit(play, (260, 440))
-        screen.blit(instruction, (885, 440))
-        screen.blit(boutique, (1590, 440))
+        screen.blit(play, (WIDTH/3-play.get_width()+10, 440))
+        screen.blit(instruction, (875, 440))
+        screen.blit(boutique, (1280, 440))
         screen.blit(title, (960-title.get_width()/2, 200))
         pygame.display.update()
 
@@ -316,7 +316,7 @@ def GameOver():
         screen.blit(Background, (0,0))
         game_over = style.render("GAME OVER !", 1, (255,0,0))
         back = style_small.render("Menu Principal", 1, (0,0,0))
-        button_1 = pygame.Rect(20, 20, 200, 50)
+        button_1 = pygame.Rect(20, 20, back.get_width(), back.get_height())
         mx, my = pygame.mouse.get_pos()
         for event in pygame.event.get():
             if button_1.collidepoint((mx, my)):
@@ -349,7 +349,7 @@ def main():
         cre = style.render(f"Credit: {credit_joueur}", 1, (255,0,0))
         Vie_restant = style.render(f"Vie = {Vie}", 1, (255,0,0))
         screen.blit(cre, (10,60))
-        screen.blit(Vie_restant, (1800, 0))
+        screen.blit(Vie_restant, (1700, 0))
         screen.blit(title, (10,0)) 
 
         for enemy in ennemies:
