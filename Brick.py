@@ -222,10 +222,12 @@ def Boutique():
         credit_boutique = style.render(f"Credit: {credit_joueur}", 1, (255,0,0))
         menu_boutique_1 = style.render("1. Vitesse de deplacement Accelérée(Joueur) -100 Credits",1 , (255,0,0))
         menu_boutique_2 = style.render("2. Vie + 1 - 50 Credits", 1, (255,0,0))
+        menu_boutique_3 = style.render("3. Tir GIGA RAPIDE", 1, (255,0,0))
 
         button_1 = pygame.Rect(WIDTH/2-menu_boutique_1.get_width()/2,HEIGHT/2,menu_boutique_1.get_width(), menu_boutique_1.get_height())
         button_back = pygame.Rect(20, 20, back.get_width(), back.get_height())
         button_2 = pygame.Rect(WIDTH/2-menu_boutique_2.get_width()/2,HEIGHT/2+menu_boutique_1.get_height()*2,menu_boutique_2.get_width(), menu_boutique_2.get_height())
+        button_3 = pygame.Rect(WIDTH/2-menu_boutique_3.get_width()/2, HEIGHT/2+menu_boutique_1.get_height()*4, menu_boutique_3.get_width(), menu_boutique_3.get_height())
 
         screen.blit(Background,(0,0))
         for event in pygame.event.get():
@@ -244,18 +246,27 @@ def Boutique():
                     if credit_joueur >= 50:
                         credit_joueur -= 50
                         Vie += 1
-                        tir_rapide -= 10
-                        print(tir_rapide)
                         Achat()
                     else:
                         Cancel()
+            if button_3.collidepoint((mx, my)):
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if credit_joueur >= 150:
+                        credit_joueur -= 150
+                        tir_rapide -= 10
+                        Achat()
+                    else:
+                        Cancel()
+
         pygame.draw.rect(screen, (81, 101, 240), button_1)
         pygame.draw.rect(screen, (81, 101, 240), button_2)
+        pygame.draw.rect(screen, (81, 101, 240), button_3)
         pygame.draw.rect(screen, (81, 101, 240), button_back)
         screen.blit(title_boutique, (WIDTH/2 - title_boutique.get_width()/2, 100))
         screen.blit(credit_boutique, (WIDTH/2 - credit_boutique.get_width()/2, 340))
         screen.blit(menu_boutique_1,(WIDTH/2-menu_boutique_1.get_width()/2,HEIGHT/2))
         screen.blit(menu_boutique_2,(WIDTH/2-menu_boutique_2.get_width()/2,HEIGHT/2 + menu_boutique_1.get_height()*2))
+        screen.blit(menu_boutique_3,(WIDTH/2-menu_boutique_3.get_width()/2,HEIGHT/2 + menu_boutique_1.get_height()*4))
         screen.blit(back, (20,20))
         pygame.display.update()
 
