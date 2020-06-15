@@ -13,8 +13,8 @@ style_small = pygame.font.Font("assets/fonts/pixel.ttf", 30)
 #Def Image du jeu
 Background = pygame.transform.scale(pygame.image.load(os.path.join("assets", "background.jpg")), (WIDTH, HEIGHT)) # Fond D'écran + Scale selon Largeur Longueur ecran pour cover tout l'écran
 Player_img = pygame.transform.scale(pygame.image.load(os.path.join("assets", "Player.png")), (100, 100))
-Ennemie_G = pygame.transform.scale(pygame.image.load(os.path.join("assets", "Ennemie_G.png")), (75, 75))
-Ennemie_V = pygame.transform.scale(pygame.image.load(os.path.join("assets", "Ennemie_V.png")), (75, 75))
+Ennemie_G = pygame.transform.scale(pygame.image.load(os.path.join("assets", "Ennemie_G.png")), (100, 100))
+Ennemie_V = pygame.transform.scale(pygame.image.load(os.path.join("assets", "Ennemie_V.png")), (100, 100))
 Boss = pygame.transform.scale(pygame.image.load(os.path.join("assets", "Boss.png")), (75,75))
 img_Laser = pygame.transform.scale(pygame.image.load(os.path.join("assets", "Laser.png")), (10,10))
 
@@ -29,6 +29,7 @@ FPS = 60 # Nombre de tick du timer 60 = On verifie 60 fois par seconde
 timer = pygame.time.Clock() # Variable contenenant le timer
 level = 0
 Vie = 1
+kill = 0
 vitesse = 20 #vitesse de déplacement
 vitesse_laser = 30
 vitesse_ennemie = 1
@@ -90,8 +91,8 @@ class Player(Acteur):
 
 
     def move_lasers(self, vitesse, acteurs): #Fonction Laser Joueur qui vérifie si collision avec autre acteur(Ennemie) et supprime l'ennemie si Collision
-        # self.cooldown()
         global credit_joueur
+        global kill
         for laser in self.laser_list:
             laser.move(vitesse_laser)
             if laser.off_screen(HEIGHT):
@@ -101,11 +102,13 @@ class Player(Acteur):
                     if laser.destroy(acteur):
                         acteurs.remove(acteur)
                         credit_joueur += 25
+                        kill += 1
                         kill_sound.play()
                         self.laser_list.remove(laser)
 
 #Classe Ennemies
 class Ennemie(Acteur):
+    #Choisir le type d'ennemi
     ENNEMY_TYPE = {
         "green": (Ennemie_G, img_Laser),
         "violet": (Ennemie_V, img_Laser),
@@ -119,7 +122,7 @@ class Ennemie(Acteur):
 
     def move(self, vitesse):
         global vitesse_ennemie
-        self.y += vitesse_ennemie
+        self.y += vitesse
 
 class Laser:
     def __init__(self, x, y, img):
@@ -139,7 +142,7 @@ class Laser:
     def off_screen(self, HEIGHT):
         return not(self.y <= HEIGHT and self.y >= 0)
 
-#Fonction pour les collisions
+#Fonction pour les collisions entre acteur
 def IntersectWith(acteur1, acteur2):
     
     distance_x = int(acteur2.x - acteur1.x)
@@ -311,10 +314,13 @@ def Cancel():
 
 def GameOver():
     global Vie
+    global kill
+    global credit_joueur
     run = True
     while run:
         screen.blit(Background, (0,0))
         game_over = style.render("GAME OVER !", 1, (255,0,0))
+        elimination = style.render(f"Ennemie Tué= {kill}", 1, (255,0,0))
         back = style_small.render("Menu Principal", 1, (0,0,0))
         button_1 = pygame.Rect(20, 20, back.get_width(), back.get_height())
         mx, my = pygame.mouse.get_pos()
@@ -326,6 +332,7 @@ def GameOver():
         pygame.draw.rect(screen, (81, 101, 240), button_1)
         screen.blit(back, (20, 20))
         screen.blit(game_over, (WIDTH/2 - game_over.get_width()/2, 540))
+        screen.blit(elimination, (WIDTH/2-elimination.get_width()/2, 600))
         pygame.display.update()
 
 
@@ -333,10 +340,12 @@ def GameOver():
 def main():
     global level
     level = 0
-    ennemies = []
-    nb_ennemies = 5
+    global credit_joueur
     global vitesse_ennemie
     global Vie
+    global kill
+    nb_ennemies = 3
+    ennemies = []
 
     Run = True 
 
@@ -348,9 +357,11 @@ def main():
         title = style.render(f"Level: {level}", 1, (255,0,0)) #Definir le text a ecrire + style + couleur
         cre = style.render(f"Credit: {credit_joueur}", 1, (255,0,0))
         Vie_restant = style.render(f"Vie = {Vie}", 1, (255,0,0))
+        e_eliminé = style.render(f"Ennemie Tué= {kill}", 1, (255,0,0))
         screen.blit(cre, (10,60))
         screen.blit(Vie_restant, (1700, 0))
         screen.blit(title, (10,0)) 
+        screen.blit(e_eliminé, (1500, 50))
 
         for enemy in ennemies:
             enemy.spawn(screen)
@@ -362,15 +373,24 @@ def main():
     while Run:
         timer.tick(FPS)
         if Vie <= 0 or player.health <=0:
+            credit_joueur = 0
             GameOver()
-
-        if len(ennemies) == 0:
-            for i in range(nb_ennemies):
-                enemy = Ennemie(random.randrange(50, WIDTH-50), random.randrange(-1000, -100), random.choice(["green", "violet"]))
-                ennemies.append(enemy)
-            nb_ennemies += 2
-            vitesse_ennemie += 0.5
-            level += 1
+        if level == 1:
+            if len(ennemies) == 0:
+                for i in range(nb_ennemies):
+                    enemy = Ennemie(random.randrange(50, WIDTH-50), random.randrange(-1000, -100), random.choice(["green", "violet"]))
+                    ennemies.append(enemy)
+                nb_ennemies = 1
+                vitesse_ennemie += 0.5
+                level += 1
+        else:
+            if len(ennemies) == 0:
+                for i in range(nb_ennemies):
+                    enemy = Ennemie(random.randrange(50, WIDTH-50), random.randrange(-1000, -100), random.choice(["boss"]))
+                    ennemies.append(enemy)
+                nb_ennemies += 2
+                vitesse_ennemie += 0.5
+                level += 1
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -403,5 +423,4 @@ def main():
                 ennemies.remove(enemy)
         player.move_lasers(vitesse_laser, ennemies)
         refresh()
-       
 main_menu()
