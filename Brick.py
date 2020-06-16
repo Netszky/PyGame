@@ -24,16 +24,16 @@ shoot_sound = pygame.mixer.Sound(os.path.join("assets", "shoot.wav"))
 kill_sound = pygame.mixer.Sound(os.path.join("assets", "kill.wav"))
 
 #Parametres
-credit_joueur = 0
+credit_joueur = 0 #Credit Joueur
 FPS = 60 # Nombre de tick du timer 60 = On verifie 60 fois par seconde
 timer = pygame.time.Clock() # Variable contenenant le timer
-level = 0
-Vie = 1
-kill = 0
+level = 0 #Niveau
+Vie = 1 #Nombre de Vie
+kill = 0 #Nombre d'ennemies tués
 vitesse = 20 #vitesse de déplacement
-vitesse_laser = 30
-vitesse_ennemie = 1
-tir_rapide = 15
+vitesse_laser = 30 #Vitesse de Déplacement laser Joueur
+vitesse_ennemie = 1 #Vitesse Deplacement Ennemies
+tir_rapide = 15 #Vitesse de Tir Joueur
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))  #pygame.FULLSCREEN) # Initialisation Fenetre
 pygame.display.set_caption('Brick Shooter YNOV') #Titre Fenetre
@@ -89,7 +89,7 @@ class Player(Acteur):
         self.mask = pygame.mask.from_surface(self.img) #Le mask est une fonction pygame qui definit la limite d'une image pour detecter des collisions au pixel près
         #self.max_health = health
 
-
+    #Override Acteur méthode
     def move_lasers(self, vitesse, acteurs): #Fonction Laser Joueur qui vérifie si collision avec autre acteur(Ennemie) et supprime l'ennemie si Collision
         global credit_joueur
         global kill
@@ -236,14 +236,14 @@ def Boutique():
             if button_back.collidepoint((mx, my)):
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     main_menu()
-            if button_1.collidepoint((mx, my)):
+            if button_1.collidepoint((mx, my)): #Vitesse de déplacement
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if credit_joueur >= 100:
                         credit_joueur -= 100
                         vitesse+= 10
                         Achat()
                     else: Cancel()
-            if button_2.collidepoint((mx, my)):
+            if button_2.collidepoint((mx, my)): #Achat de Vie
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if credit_joueur >= 50:
                         credit_joueur -= 50
@@ -251,7 +251,7 @@ def Boutique():
                         Achat()
                     else:
                         Cancel()
-            if button_3.collidepoint((mx, my)):
+            if button_3.collidepoint((mx, my)): #Tir Rapide (Reduction cooldown)
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if credit_joueur >= 150:
                         credit_joueur -= 150
@@ -327,7 +327,7 @@ def GameOver():
         for event in pygame.event.get():
             if button_1.collidepoint((mx, my)):
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    Vie = 1
+                    Vie = 1 #Remettre Vie a 1 pour prochaine partie
                     main_menu()
         pygame.draw.rect(screen, (81, 101, 240), button_1)
         screen.blit(back, (20, 20))
@@ -351,7 +351,7 @@ def main():
 
     player = Player(300,650,100)
 
-    def refresh():
+    def refresh(): #Affichage de l'écran de jeu
         global level
         screen.blit(Background,(0,0))
         title = style.render(f"Level: {level}", 1, (255,0,0)) #Definir le text a ecrire + style + couleur
@@ -372,12 +372,12 @@ def main():
 
     while Run:
         timer.tick(FPS)
-        if Vie <= 0 or player.health <=0:
+        if Vie <= 0 or player.health <=0: #Game over
             credit_joueur = 0
             GameOver()
         if level == 1:
             if len(ennemies) == 0:
-                for i in range(nb_ennemies):
+                for i in range(nb_ennemies): # Spawn Ennemies
                     enemy = Ennemie(random.randrange(50, WIDTH-50), random.randrange(-1000, -100), random.choice(["green", "violet"]))
                     ennemies.append(enemy)
                 nb_ennemies = 1
@@ -409,16 +409,16 @@ def main():
         if  keys[pygame.K_ESCAPE]: #Quitter
             main_menu()
 
-        for enemy in ennemies:
+        for enemy in ennemies: #Faire bouger les ennemies 
             enemy.move(vitesse_ennemie)
             enemy.move_lasers(vitesse_ennemie*-2, player)
 
             if random.randrange(0, 200) == 1:
                 enemy.tirer()
-            if IntersectWith(enemy, player):
+            if IntersectWith(enemy, player): #Si un joueur entre en collision avec un ennemie
                 Vie -= 1
                 ennemies.remove(enemy)
-            if enemy.y + enemy.get_height() > HEIGHT:
+            if enemy.y + enemy.get_height() > HEIGHT: #Si un ennemie touche le bas de l'écran
                 Vie -= 1
                 ennemies.remove(enemy)
         player.move_lasers(vitesse_laser, ennemies)
