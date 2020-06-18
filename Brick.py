@@ -90,9 +90,11 @@ class Player(Acteur):
         #self.max_health = health
 
     #Override Acteur méthode
-    def move_lasers(self, vitesse, acteurs): #Fonction Laser Joueur qui vérifie si collision avec autre acteur(Ennemie) et supprime l'ennemie si Collision
+    def move_lasers(self, Vitesse, acteurs): #Fonction Laser Joueur qui vérifie si collision avec autre acteur(Ennemie) et supprime l'ennemie si Collision
         global credit_joueur
         global kill
+        global Vie
+        global vitesse
         for laser in self.laser_list:
             laser.move(vitesse_laser)
             if laser.off_screen(HEIGHT):
@@ -101,6 +103,13 @@ class Player(Acteur):
                 for acteur in acteurs:
                     if laser.destroy(acteur):
                         acteurs.remove(acteur)
+                        a = random.randrange(1, 6, 1)
+                        if a == 1:
+                            Vie += 1
+                        if a == 2: 
+                            vitesse += 1
+                        else:
+                            pass
                         credit_joueur += 25
                         kill += 1
                         kill_sound.play()
@@ -422,5 +431,7 @@ def main():
                 Vie -= 1
                 ennemies.remove(enemy)
         player.move_lasers(vitesse_laser, ennemies)
+
+        
         refresh()
 main_menu()
