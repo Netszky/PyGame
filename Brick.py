@@ -304,7 +304,6 @@ def Achat():
 def Cancel():
     global credit_joueur
     run = True
-    keys = pygame.key.get_pressed()
     while run:
         screen.blit(Background, (0,0))
         cancel_1 = style.render(f"Pas Assez de credit Credit: {credit_joueur}", 1, (255,0,0))
@@ -420,7 +419,7 @@ def main():
 
         for enemy in ennemies: #Faire bouger les ennemies 
             enemy.move(vitesse_ennemie)
-            enemy.move_lasers(vitesse_ennemie*-2, player)
+            enemy.move_lasers(vitesse_ennemie, player)
 
             if random.randrange(0, 200) == 1:
                 enemy.tirer()
